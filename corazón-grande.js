@@ -5,6 +5,7 @@ var settings = {
     velocity: 80,
     effect: -1.3,
     size: 8,
+    color: "#4700b0"
     },
 };
 (function() {
@@ -153,11 +154,12 @@ var ParticlePool = (function() {
     };
     return ParticlePool;
 })();
-(function(canvas) {
+var heartAnimation2 = (function(canvas) {
     var context = canvas.getContext("2d"),
-    particles = new ParticlePool(settings.particles.length),
-    particleRate = settings.particles.length / settings.particles.duration,
-    time;
+        particles = new ParticlePool(settings.particles.length),
+        particleRate = settings.particles.length / settings.particles.duration,
+        time,
+        image;
 
     function pointOnHeart(t) {
     return new Point(
@@ -169,36 +171,43 @@ var ParticlePool = (function() {
         25
     );
     }
-    var image = (function() {
-    var canvas = document.createElement("canvas"),
-        context = canvas.getContext("2d");
-    canvas.width = settings.particles.size;
-    canvas.height = settings.particles.size;
+    function createParticleImage() {
+        var canvas = document.createElement("canvas"),
+            context = canvas.getContext("2d");
+        canvas.width = settings.particles.size;
+        canvas.height = settings.particles.size;
 
-    function to(t) {
-        var point = pointOnHeart(t);
-        point.x =
-        settings.particles.size / 2 + (point.x * settings.particles.size) / 350;
-        point.y =
-        settings.particles.size / 2 - (point.y * settings.particles.size) / 350;
-        return point;
+        function to(t) {
+            var point = pointOnHeart(t);
+            point.x = settings.particles.size / 2 + (point.x * settings.particles.size) / 350;
+            point.y = settings.particles.size / 2 - (point.y * settings.particles.size) / 350;
+            return point;
+        }
+        context.beginPath();
+        var t = -Math.PI;
+        var point = to(t);
+        context.moveTo(point.x, point.y);
+        while (t < Math.PI) {
+            t += 0.01;
+            point = to(t);
+            context.lineTo(point.x, point.y);
+        }
+        context.closePath();
+        context.fillStyle = settings.particles.color;
+        context.fill();
+        var newImage = new Image();
+        newImage.src = canvas.toDataURL();
+        return newImage;
     }
-    context.beginPath();
-    var t = -Math.PI;
-    var point = to(t);
-    context.moveTo(point.x, point.y);
-    while (t < Math.PI) {
-        t += 0.01;
-        point = to(t);
-        context.lineTo(point.x, point.y);
+
+    // Initialize image
+    image = createParticleImage();
+
+    // Expose a method to update the particle color
+    function updateParticleColor(newColor) {
+        settings.particles.color = newColor;
+        image = createParticleImage(); 
     }
-    context.closePath();
-    context.fillStyle = "#f50b02";
-    context.fill();
-    var image = new Image();
-    image.src = canvas.toDataURL();
-    return image;
-    })();
 
     function render() {
     requestAnimationFrame(render);
@@ -225,4 +234,8 @@ var ParticlePool = (function() {
     onResize();
     render();
     }, 10);
+
+    return {
+        updateParticleColor: updateParticleColor
+    };
 })(document.getElementById("pinkboard"));

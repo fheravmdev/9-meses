@@ -32,9 +32,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  effectText.addEventListener('click', function () {
+  effectText.addEventListener('click', function() {
     settings.particles.effect = 0.5;
-      // Styling adjustments
+    heartAnimation2.updateParticleColor("#d20606");
+    
+
     effectText.style.color = 'white';
     effectText.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.8)';
     effectText.style.top = '100px';
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-      // Image loop
+
       setInterval(() => {
         heartAnimation();
         imageIndex = (imageIndex + 1) % images.length;
@@ -66,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => {
           bgImage.src = images[imageIndex];
           bgImage.style.opacity = '1';
-        }, 1500); // Match your CSS transition
+        }, 1500); 
       }, 5000);
 
 
